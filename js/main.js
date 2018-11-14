@@ -3,12 +3,23 @@ var camera;
 var renderer;
 var light;
 
+var camera_config;
+var startX,endX,startY,endY;
+var ismousedown = false;
+
 // initThree initThree
 var initThree = function(){
+    camera_config = {
+        fov: 75,
+        near: 0.1,
+        far: 1000,
+        aspect: window.innerWidth/window.innerHeight
+    };
+    camera = new THREE.PerspectiveCamera(camera_config.fov, camera_config.aspect,camera_config.near, camera_config.far);
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
 
+    MouseEvent();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 };
@@ -30,84 +41,33 @@ window.onload = function(){
     rect.position.y = -30;
     scene.add(rect);
 
-    // 鼠标事件
-    var startX,endX,startY,endY;
-    var ismousedown = false;
-    console.log(camera.position.x,camera.position.y);
-    document.body.onmousedown=function (event) {
-        ismousedown = true
-        startX = event.clientX;
-        startY = event.clientY;
-    };
-    document.body.onmouseup=function (event) {
-        ismousedown = false;
-        startX = event.clientX;
-        startY = event.clientY;
-    };
-    document.body.onmousemove=function (event) {
-        console.log(event.button)
-        if (ismousedown ) {
-            endX = event.clientX;
-            endY = event.clientY;
-            var x=endX-startX;
-            var y=endY-startY;
-            if (Math.abs(x)>Math.abs(y)) {
-                camera.position.x=camera.position.x-x*0.04;
-            } else {
-
-                camera.position.y=camera.position.y+y*0.04;
-            }
-            console.log(camera.position.x,endY,startY);
-            startX=endX;
-            startY=endY;
-        }
-    };
-
+    
     // 光源
     yellowLight = new THREE.PointLight( 0xFFFFFF, 6, 100 );
     redLight = new THREE.PointLight( 0xFFFFFF, 7, 100 );
-    yellowLight.position.set( 50, 50, 70 );
+    yellowLight.position.set( 50, 60, 70 );
     redLight.position.set( 50, 50, -70 );
     scene.add( yellowLight );
     scene.add( redLight );
 
     // 相机运动
-    var ArrayIndex = 0;
-    var pointArray = CalcaulateCirArray(); // 计算圆周运动坐标数组
-    function animation(){ 
+    function animation(){  
         if (!ismousedown){
-            // camera.position.x = pointArray[ArrayIndex].x;
-            // camera.position.z = pointArray[ArrayIndex].y;
+            var newPoint = CircleNextPoint( camera.position.x, camera.position.z,0.005);
+            camera.position.x = newPoint.x;
+            camera.position.z = newPoint.z;
         }
         renderer.render(scene, camera);
         camera.lookAt(0,0,0)
         requestAnimationFrame(animation);
-        if(ArrayIndex>=360*5-1){
-            ArrayIndex=0;
-        }else{
-            ArrayIndex++;
-        }
     }
     animation();
 };
 
-// CalcaulateCir 计算圆周运动坐标
-var CalcaulateCir = function(a,x0,y0,r,pi){
-    x1 = x0 + r * Math.sin( a * pi / 180.0);
-    y1 = y0 + r * Math.cos( a * pi / 180.0);
-    return {x: x1,y: y1};
-};
-
-var CalcaulateCirArray = function(){
-    var pointArray = [];
-    for (var a = 0;a < 360*5; a++){
-        var flg = 0;
-        if (a>0){
-            flg = a / 5
-        }
-        var point = CalcaulateCir(flg,0,0,90,3.1415);
-        pointArray[a] = point;
-    }
-    return pointArray;
-};
+// 计算下个点的坐标
+var CircleNextPoint = function(x,z,r){
+    NewX = x * Math.cos(r) + z * Math.sin(r);
+    NewZ = z * Math.cos(r) - x * Math.sin(r);
+    return {x: NewX, z: NewZ}
+}
 
