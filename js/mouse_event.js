@@ -16,12 +16,15 @@ var MouseEvent = function(){
             endY = event.clientY;
             var x=endX-startX;
             var y=endY-startY;
-            var newPoint = CircleNextPoint( camera.position.x, camera.position.z,x*0.001);
             if (Math.abs(x)>Math.abs(y)) { // 水平
+                var newPoint = CircleNextPoint( camera.position.x, camera.position.z,x*0.001);
+                console.log(newPoint)
+
                 camera.position.x = newPoint.x;
+                camera.position.z = newPoint.z;
                 // camera.position.x=camera.position.x-x*0.04;
             } else {   // 垂直
-                camera.position.y = newPoint.z;
+                // camera.position.y = newPoint.z;
                 // camera.position.y=camera.position.y+y*0.04;
             }
             startX=endX;
