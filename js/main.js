@@ -31,7 +31,37 @@ window.onload = function(){
     scene.add(rect);
 
     // 鼠标事件
-    addTouchListener();
+    var startX,endX,startY,endY;
+    var ismousedown = false;
+    console.log(camera.position.x,camera.position.y);
+    document.body.onmousedown=function (event) {
+        ismousedown = true
+        startX = event.clientX;
+        startY = event.clientY;
+    };
+    document.body.onmouseup=function (event) {
+        ismousedown = false;
+        startX = event.clientX;
+        startY = event.clientY;
+    };
+    document.body.onmousemove=function (event) {
+        console.log(event.button)
+        if (ismousedown ) {
+            endX = event.clientX;
+            endY = event.clientY;
+            var x=endX-startX;
+            var y=endY-startY;
+            if (Math.abs(x)>Math.abs(y)) {
+                camera.position.x=camera.position.x-x*0.04;
+            } else {
+
+                camera.position.y=camera.position.y+y*0.04;
+            }
+            console.log(camera.position.x,endY,startY);
+            startX=endX;
+            startY=endY;
+        }
+    };
 
     // 光源
     yellowLight = new THREE.PointLight( 0xFFFFFF, 6, 100 );
@@ -45,8 +75,10 @@ window.onload = function(){
     var ArrayIndex = 0;
     var pointArray = CalcaulateCirArray(); // 计算圆周运动坐标数组
     function animation(){ 
-        // camera.position.x = pointArray[ArrayIndex].x;
-        // camera.position.z = pointArray[ArrayIndex].y;
+        if (!ismousedown){
+            // camera.position.x = pointArray[ArrayIndex].x;
+            // camera.position.z = pointArray[ArrayIndex].y;
+        }
         renderer.render(scene, camera);
         camera.lookAt(0,0,0)
         requestAnimationFrame(animation);
@@ -79,27 +111,3 @@ var CalcaulateCirArray = function(){
     return pointArray;
 };
 
-
-function addTouchListener() {
-    var startX,endX,startY,endY;
-    document.body.onmousedown=function (event) {
-        startX = event.clientX;
-        startY = event.clientY;
- 
-    };
-    document.body.onmousemove=function (event) {
-        if (event.button == 1 ) {
-            endX = event.clientX;
-            endY = event.clientY;
-            var x=endX-startX;
-            var y=endY-startY;
-            if (Math.abs(x)>Math.abs(y)) {
-                camera.position.x=camera.position.x-x*0.05;
-            } else {
-                camera.position.y=camera.position.y+y*0.05;
-            }
-            startX=endX;
-            startY=endY;
-        }
-    };
-};
