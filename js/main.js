@@ -22,9 +22,20 @@ window.onload = function(){
     camera.position.z = 90;
     camera.position.y = 30;
 
+    // 地面
+    let geometryPlane = new THREE.PlaneGeometry(100,100);
+    let materialPlane = new THREE.MeshLambertMaterial({color:0xD3D3D3});
+    let rect = new THREE.Mesh(geometryPlane,materialPlane);
+    rect.rotation.x = -1.5;
+    rect.position.y = -30;
+    scene.add(rect);
+
+    // 鼠标事件
+    addTouchListener();
+
     // 光源
-    yellowLight = new THREE.PointLight( 0xFFFF00, 2, 100 );
-    redLight = new THREE.PointLight( 0xFF0000, 3, 100 );
+    yellowLight = new THREE.PointLight( 0xFFFFFF, 6, 100 );
+    redLight = new THREE.PointLight( 0xFFFFFF, 7, 100 );
     yellowLight.position.set( 50, 50, 70 );
     redLight.position.set( 50, 50, -70 );
     scene.add( yellowLight );
@@ -34,8 +45,8 @@ window.onload = function(){
     var ArrayIndex = 0;
     var pointArray = CalcaulateCirArray(); // 计算圆周运动坐标数组
     function animation(){ 
-        camera.position.x = pointArray[ArrayIndex].x;
-        camera.position.z = pointArray[ArrayIndex].y;
+        // camera.position.x = pointArray[ArrayIndex].x;
+        // camera.position.z = pointArray[ArrayIndex].y;
         renderer.render(scene, camera);
         camera.lookAt(0,0,0)
         requestAnimationFrame(animation);
@@ -66,4 +77,29 @@ var CalcaulateCirArray = function(){
         pointArray[a] = point;
     }
     return pointArray;
+};
+
+
+function addTouchListener() {
+    var startX,endX,startY,endY;
+    document.body.onmousedown=function (event) {
+        startX = event.clientX;
+        startY = event.clientY;
+ 
+    };
+    document.body.onmousemove=function (event) {
+        if (event.button == 1 ) {
+            endX = event.clientX;
+            endY = event.clientY;
+            var x=endX-startX;
+            var y=endY-startY;
+            if (Math.abs(x)>Math.abs(y)) {
+                camera.position.x=camera.position.x-x*0.05;
+            } else {
+                camera.position.y=camera.position.y+y*0.05;
+            }
+            startX=endX;
+            startY=endY;
+        }
+    };
 };
