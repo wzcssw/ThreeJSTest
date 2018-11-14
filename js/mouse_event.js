@@ -17,15 +17,13 @@ var MouseEvent = function(){
             var x=endX-startX;
             var y=endY-startY;
             if (Math.abs(x)>Math.abs(y)) { // 水平
-                var newPoint = CircleNextPoint( camera.position.x, camera.position.z,x*0.001);
-                console.log(newPoint)
-
+                var newPoint = CircleNextPoint( camera.position.x, camera.position.z,-x*0.001);
                 camera.position.x = newPoint.x;
                 camera.position.z = newPoint.z;
-                // camera.position.x=camera.position.x-x*0.04;
             } else {   // 垂直
-                // camera.position.y = newPoint.z;
-                // camera.position.y=camera.position.y+y*0.04;
+                var newPoint = CircleNextPoint( camera.position.y, camera.position.z,y*0.001);
+                camera.position.y = newPoint.x;
+                camera.position.z = newPoint.z;
             }
             startX=endX;
             startY=endY;
