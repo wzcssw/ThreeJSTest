@@ -106,10 +106,11 @@ window.onload = function(){
     animation();
 };
 
-// 计算下个点的坐标
+// CircleNextPoint 计算相机下个点的坐标
 var CircleNextPoint = function(x,z,r){
-    NewX = x * Math.cos(r) + z * Math.sin(r)+200;
-    NewZ = z * Math.cos(r) - x * Math.sin(r)+200;
+    var orgin = {x: 200,y: 200};
+    NewX = (x-orgin.x) * Math.cos(r) + (z-orgin.y) * Math.sin(r) + orgin.x;
+    NewZ = (z-orgin.y) * Math.cos(r) - (x-orgin.x) * Math.sin(r) + orgin.y;
     return {x: NewX, z: NewZ}
 }
 
